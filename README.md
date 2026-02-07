@@ -91,7 +91,7 @@ project-root/
 │   │   ├── favicon.ico  # Website favicon
 │   │   └── *.png        # Skill/feature icons
 │   ├── files/
-│   │   └── Resume.pdf   # Downloadable resume
+│   │   └── myresume.pdf   # Downloadable resume
 │   └── index.html       # Main HTML file
 ├── firebase.json        # Firebase configuration
 └── README.md           # Project documentation
