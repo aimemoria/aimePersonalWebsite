@@ -165,7 +165,7 @@ const updateProjectCount = () => {
         .then(response => response.json())
         .then(data => {
             const total = Array.isArray(data) ? data.length : (data.projects ? data.projects.length : 0);
-            countEl.textContent = total || '--';
+            countEl.textContent = total ? `${total}+` : '--';
         })
         .catch(() => {
             countEl.textContent = '--';

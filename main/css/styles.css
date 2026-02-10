@@ -55,6 +55,7 @@ header {
 header nav {
     display: flex; /* Ensure navigation items are on the same line */
     align-items: center; /* Align navigation items vertically */
+    gap: 0.5rem;
 }
 
 /* Navigation Styling */
@@ -694,6 +695,10 @@ footer .logo{
 @media screen and (max-width: 768px) {
     .menu-toggle {
         display: flex; /* Show on smaller screens */  
+    }
+
+    .dark-mode-btn {
+        margin-right: 0.35rem;
     }
 
     header nav ul {
