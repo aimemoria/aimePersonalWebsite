@@ -7,51 +7,64 @@ document.querySelectorAll('section').forEach(section => {
 });
 // Dark/Light Mode Toggle
 const darkModeToggle = document.getElementById('darkModeToggle');
+const setThemeIcon = () => {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const icon = darkModeToggle.querySelector('i');
+    if (icon) {
+        icon.classList.toggle('fa-sun', isDarkMode);
+        icon.classList.toggle('fa-moon', !isDarkMode);
+    }
+};
 
 darkModeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    darkModeToggle.innerHTML = isDarkMode ? '&#9680;' : '&#9680;'; // Sun and Moon Symbols
+    setThemeIcon();
 });
 
 // Default Dark Mode Styling
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.body.classList.add('dark-mode');
-    darkModeToggle.innerHTML = '&#9680;'; // Sun Symbol
 }
+setThemeIcon();
 
 // Menu Toggle Button Functionality
 const menuToggle = document.getElementById('menuToggle');
 const menu = document.querySelector('nav ul');
 const logo = document.querySelector('.logo');
 const header = document.querySelector('header');
+const mobileQuery = window.matchMedia('(max-width: 768px)');
+
+const setMenuState = (isOpen) => {
+    menu.classList.toggle('menu-shown', isOpen);
+    menuToggle.classList.toggle('is-open', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+
+    if (mobileQuery.matches) {
+        logo.style.visibility = isOpen ? 'hidden' : 'visible';
+        darkModeToggle.style.visibility = isOpen ? 'hidden' : 'visible';
+    } else {
+        logo.style.visibility = 'visible';
+        darkModeToggle.style.visibility = 'visible';
+    }
+};
 
 menuToggle.addEventListener('click', () => {
-    menu.classList.toggle('menu-shown'); // Show menu
-    menu.classList.toggle('menu-hidden'); // Hide menu
-
-    // Toggle between horizontal lines and cross (X) icon
-    if (menu.classList.contains('menu-shown')) {
-        menuToggle.innerHTML = '&#x2715;'; // X icon
-        logo.style.visibility = 'hidden'; // Hide logo
-        darkModeToggle.style.visibility = 'hidden'; // Hide dark/light toggle button
-    } else {
-        menuToggle.innerHTML = '&#x2015;<br>&#x2015;'; // Horizontal lines
-        logo.style.visibility = 'visible'; // Show logo
-        darkModeToggle.style.visibility = 'visible'; // Show dark/light toggle button
-    }
+    const isOpen = !menu.classList.contains('menu-shown');
+    setMenuState(isOpen);
 });
 
-// Hide menu when clicking outside of it
+// Close menu when clicking outside or selecting a link
 document.addEventListener('click', (e) => {
     if (!menu.contains(e.target) && e.target !== menuToggle) {
-        menu.classList.add('menu-hidden'); // Ensure the menu is hidden
-        menu.classList.remove('menu-shown'); // Remove the visible class
-        menuToggle.innerHTML = '&#x2015;<br>&#x2015;'; // Reset to horizontal lines
-        logo.style.visibility = 'visible'; // Show logo
-        darkModeToggle.style.visibility = 'visible'; // Show dark/light toggle button
+        setMenuState(false);
     }
 });
+
+menu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => setMenuState(false));
+});
+
+mobileQuery.addEventListener('change', () => setMenuState(false));
 
 // Toggle Hidden Skills
 function toggleHiddenSkills() {
@@ -118,16 +131,61 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
         // Clear the form (optional)
         document.getElementById('contactForm').reset();
     }, (error) => {
-        // Display error message
+        // Display error message and fall back to mailto
         console.error('Error:', error);
-        document.getElementById('form-message').textContent = 'Oops! Something went wrong. Please try again.';
+        document.getElementById('form-message').textContent = 'Email service is unavailable. Opening your email app...';
         document.getElementById('form-message').style.color = 'red';
+
+        const subject = encodeURIComponent('Contact from Portfolio Website');
+        const bodyLines = [
+            `Name: ${name}`,
+            `Email: ${contactInfo}`,
+            location ? `Location: ${location}` : null,
+            '',
+            'Message:',
+            message
+        ].filter(Boolean);
+        const body = encodeURIComponent(bodyLines.join('\n'));
+        const mailto = `mailto:220aime@gmail.com?subject=${subject}&body=${body}`;
+        window.location.href = mailto;
     });
 });
 
 // Automatically update the year
 document.getElementById('currentYear').textContent = new Date().getFullYear();
 document.getElementById('yearsInField').textContent = new Date().getFullYear() - 2022;
+
+// Match contact sidebar button heights to form card
+const syncContactLinkHeights = () => {
+    const sidebar = document.querySelector('.contact-sidebar');
+    const card = document.getElementById('contact-1');
+    if (!sidebar || !card) return;
+
+    if (mobileQuery.matches) {
+        sidebar.style.removeProperty('--contact-link-height');
+        return;
+    }
+
+    const links = sidebar.querySelectorAll('a');
+    if (!links.length) return;
+
+    const cardHeight = card.getBoundingClientRect().height;
+    const gapValue = parseFloat(getComputedStyle(sidebar).rowGap || getComputedStyle(sidebar).gap || 0) || 0;
+    const totalGap = gapValue * (links.length - 1);
+    const linkHeight = Math.max(0, (cardHeight - totalGap) / links.length);
+    sidebar.style.setProperty('--contact-link-height', `${linkHeight}px`);
+};
+
+syncContactLinkHeights();
+window.addEventListener('resize', syncContactLinkHeights);
+
+if (typeof ResizeObserver !== 'undefined') {
+    const contactCard = document.getElementById('contact-1');
+    if (contactCard) {
+        const observer = new ResizeObserver(syncContactLinkHeights);
+        observer.observe(contactCard);
+    }
+}
 
 // Particle Animation
 const canvas = document.getElementById('network');
