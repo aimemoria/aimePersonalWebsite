@@ -145,7 +145,7 @@ const updateSkillsPager = () => {
     if (skillsPrev) skillsPrev.disabled = currentSkillsPage <= 0;
     if (skillsNext) skillsNext.disabled = currentSkillsPage >= totalPages - 1;
     if (skillsPagination) {
-        skillsPagination.classList.toggle('is-visible', totalPages > 1 && hiddenSkills.classList.contains('is-visible'));
+        skillsPagination.classList.toggle('is-visible', hiddenSkills.classList.contains('is-visible'));
     }
 };
 

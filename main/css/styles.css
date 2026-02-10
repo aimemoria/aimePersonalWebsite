@@ -496,21 +496,71 @@ body.dark-mode #skills{
     margin-top: 1.5rem;
     gap: 1.5rem;
     display: none;
-    grid-template-columns: repeat(3, minmax(0, 1fr)); 
     justify-content: center;
     align-items: flex-start;
+    overflow: hidden;
+}
+
+.hidden-skills.is-visible {
+    display: block;
+}
+
+.hidden-skills-track {
+    display: flex;
+    width: 100%;
+    transition: transform 0.35s ease;
+}
+
+.hidden-skills-page {
+    min-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.skills-pagination {
+    margin-top: 1rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-family: 'Quicksand', serif;
+}
+
+.skills-pagination.is-visible {
+    display: flex;
+}
+
+.skills-page-btn {
+    background: transparent;
+    border: 1px solid #62b682;
+    color: #52714b;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    font-family: 'Quicksand', serif;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.skills-page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.skills-page-btn:not(:disabled):hover {
+    background: rgba(98, 182, 130, 0.15);
 }
 
 @media screen and (max-width: 1024px) {
     .skills-container,
-    .hidden-skills {
+    .hidden-skills-page {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media screen and (max-width: 768px) {
     .skills-container,
-    .hidden-skills {
+    .hidden-skills-page {
         grid-template-columns: 1fr;
     }
 }
@@ -548,6 +598,10 @@ body.dark-mode #skills{
 
 body.dark-mode .contact-sidebar  a{
     color: #eaeaea;
+}
+
+body.dark-mode .contact-sidebar a[href*="github.com"] {
+    color: #eaeaea !important;
 }
 
 .contact-sidebar a {
@@ -780,6 +834,10 @@ footer .logo{
         font-size: 1.6rem;
         padding: 0.6rem 0.75rem;
         height: auto;
+    }
+
+    .contact-sidebar {
+        align-items: center;
     }
 
 .contact-sidebar a i {
